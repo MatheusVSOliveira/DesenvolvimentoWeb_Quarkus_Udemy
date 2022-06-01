@@ -33,6 +33,9 @@ import org.eclipse.microprofile.openapi.annotations.security.OAuthFlow;
 import org.eclipse.microprofile.openapi.annotations.security.OAuthFlows;
 import org.eclipse.microprofile.openapi.annotations.security.SecurityRequirement;
 import org.eclipse.microprofile.openapi.annotations.security.SecurityScheme;
+import org.eclipse.microprofile.metrics.annotation.Counted;
+import org.eclipse.microprofile.metrics.annotation.SimplyTimed;
+import org.eclipse.microprofile.metrics.annotation.Timed;
 import org.eclipse.microprofile.openapi.annotations.enums.SecuritySchemeType;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
@@ -56,6 +59,9 @@ public class RestauranteResource {
 	
 	
     @GET
+    @Counted(name = "Quantidade buscas Restaurante")
+    @SimplyTimed(name = "Tempo simples de busca")
+    @Timed(name = "Tempo completo de busca")
     public List<Restaurante> buscar() {
         return Restaurante.listAll();
     }
