@@ -35,6 +35,8 @@ import org.eclipse.microprofile.openapi.annotations.security.OAuthFlow;
 import org.eclipse.microprofile.openapi.annotations.security.OAuthFlows;
 import org.eclipse.microprofile.openapi.annotations.security.SecurityRequirement;
 import org.eclipse.microprofile.openapi.annotations.security.SecurityScheme;
+import org.eclipse.microprofile.jwt.Claim;
+import org.eclipse.microprofile.jwt.Claims;
 import org.eclipse.microprofile.metrics.annotation.Counted;
 import org.eclipse.microprofile.metrics.annotation.SimplyTimed;
 import org.eclipse.microprofile.metrics.annotation.Timed;
@@ -64,6 +66,13 @@ public class RestauranteResource {
 	@Channel("restaurantes") // Canal do ActiveMQ
 	Emitter<Restaurante> emitter;
 
+	//@Inject
+	//JsonWebToken jwt;
+
+	@Inject
+	@Claim(standard = Claims.sub)
+	String sub;
+
 	@GET
 	@Counted(name = "Quantidade buscas Restaurante")
 	@SimplyTimed(name = "Tempo simples de busca")
@@ -78,6 +87,7 @@ public class RestauranteResource {
 	@APIResponse(responseCode = "400", content = @Content(schema = @Schema(allOf = ConstraintViolationResponse.class)))
 	public Response adicionar(@Valid AdicionarRestauranteDTO dto) {
 		Restaurante restaurante = restauranteMapper.toRestaurante(dto);
+		restaurante.proprietario = sub;
 		restaurante.persist();
 
 		// Trecho que vai postar na fila activeMQ
